@@ -1,6 +1,7 @@
 /* ベーススタイルとフォント */
 body {
-    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+    /* M PLUS 1p を適用 */
+    font-family: 'M PLUS 1p', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
     margin: 0;
     padding: 0;
     background-color: #f4f4f9; 
@@ -63,7 +64,7 @@ body {
 
 /* 🍔 ハンバーガーメニューアイコン (PCでは非表示) */
 .hamburger-icon {
-    display: none; /* PCサイズでは非表示 */
+    display: none; 
     background: none;
     border: none;
     cursor: pointer;
@@ -135,7 +136,7 @@ body {
 
 .grid-item img {
     width: 100%;
-    height: 100%;
+    height: 100%; /* スマホでの過度な拡大を防ぐため */
     object-fit: cover; 
     display: block;
     transition: transform 0.3s ease-in-out;
@@ -179,7 +180,7 @@ body {
     cursor: pointer;
     opacity: 0.8;
     transition: opacity 0.2s;
-    z-index: 1030; /* 最前面に持ってくる */
+    z-index: 1030; 
 }
 
 .modal-nav-btn {
@@ -214,17 +215,21 @@ body {
     position: absolute;
     bottom: 20px;
     right: 50%;
-    transform: translateX(50%);
+    transform: translateX(50%); /* ⭐ 中央揃えのためのプロパティ ⭐ */
     color: #fff;
     background-color: #4A90E2; 
     padding: 8px 15px; 
     border-radius: 5px; 
     text-decoration: none;
     font-size: 1em;
-    z-index: 1020;
+    z-index: 1020; /* 適切なz-index */
     transition: background-color 0.3s;
     font-weight: bold;
     display: inline-block; 
+}
+
+.download-btn:hover {
+    background-color: #357ABD; 
 }
 
 body.slideshow-mode #modal .download-btn {
@@ -330,13 +335,12 @@ body.slideshow-mode #modal .download-btn {
     }
     
     .header h1 {
-        /* タイトルを左端に維持し、右側の要素と適切な間隔を空ける */
         margin-right: auto;
     }
 
-    /* 💡 PC用のナビゲーションを非表示に */
+    /* PC用のナビゲーションを非表示に */
     .main-nav {
-        display: none; /* デフォルトで非表示 */
+        display: none; 
         flex-direction: column; 
         position: absolute;
         top: 100%; 
@@ -363,7 +367,7 @@ body.slideshow-mode #modal .download-btn {
         padding: 15px 10px;
     }
     
-    /* 💡 ハンバーガーアイコンを表示 */
+    /* ハンバーガーアイコンを表示 */
     .hamburger-icon {
         display: block;
         margin-left: 20px; 
