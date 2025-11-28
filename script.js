@@ -30,7 +30,11 @@ const slideshowBtn = document.getElementById('slideshow-btn');
 const audioPlayer = document.getElementById('audio-player');
 const downloadBtn = document.getElementById('download-btn'); 
 
-// 💌 メッセージフォーム関連の要素
+// 🍔 ハンバーガーメニュー関連の要素
+const hamburgerIcon = document.getElementById('hamburger-icon');
+const mainNav = document.getElementById('main-nav');
+
+// 💌 メッセージフォーム関連の要素 (変更なし)
 const messageBtn = document.getElementById('message-btn');
 const messageModal = document.getElementById('message-modal');
 const messageCloseBtn = document.getElementById('message-close-btn');
@@ -49,7 +53,7 @@ const OPERATION_TIME_MS = 20000; // 20秒 (操作方法表示時間)
 const SLIDESHOW_TIME_MS = 10000; // 10秒
 
 
-// --- タイマーとインターバルの管理 ---
+// --- タイマーとインターバルの管理 (変更なし) ---
 
 function clearSlideInterval() {
     if (slideInterval) {
@@ -90,9 +94,8 @@ function goToNextImageOnTap() {
     changeImage(1);
 }
 
-// --- グリッド表示の生成 ---
+// --- グリッド表示の生成 (変更なし) ---
 function createGrid() {
-    // 💡 GRID_IMAGES (操作方法を除いたリスト) を使用
     GRID_IMAGES.forEach((image, index) => {
         const item = document.createElement('div');
         item.classList.add('grid-item');
@@ -109,25 +112,61 @@ function createGrid() {
             item.classList.add('loaded');
         }, index * 100); 
         
-        // クリック時にALL_IMAGESの対応するインデックス (index + 1) を渡す
         item.addEventListener('click', () => openModal(index + 1, false)); 
     });
 }
 
+// --- フルスクリーンモードの起動 ---
+function requestFullScreen(element) {
+    if (element.requestFullscreen) {
+        element.requestFullscreen();
+    } else if (element.mozRequestFullScreen) { /* Firefox */
+        element.mozRequestFullScreen();
+    } else if (element.webkitRequestFullscreen) { /* Chrome, Safari and Opera */
+        element.webkitRequestFullscreen();
+    } else if (element.msRequestFullscreen) { /* IE/Edge */
+        element.msRequestFullscreen();
+    }
+}
+
+// --- 画面の向き強制（スマホ/タブレット） ---
+function forceLandscapeOrientation() {
+    if (window.screen.orientation) {
+        // ロックを試行し、失敗しても続行
+        window.screen.orientation.lock('landscape').catch(err => {
+            console.warn("Orientation lock failed:", err);
+        });
+    }
+}
+
+function releaseOrientationLock() {
+    if (window.screen.orientation) {
+        // ロックを解除
+        window.screen.orientation.unlock();
+    }
+}
+
 // --- モーダル（拡大表示）の表示と画像切り替え ---
 function openModal(index, isSlideshow) {
+    // 🍔 メニューを閉じる
+    mainNav.classList.remove('open');
+    hamburgerIcon.classList.remove('open');
+    
     currentImageIndex = index;
     isSlideshowMode = isSlideshow;
     
     document.body.classList.toggle('slideshow-mode', isSlideshow);
     
     if (isSlideshow) {
+        // 💡 フルスクリーンと横向きを促す
+        requestFullScreen(document.documentElement);
+        forceLandscapeOrientation(); 
+        
         if (index === 0) {
             setOperationTimer(); 
             modalImage.addEventListener('click', goToNextImageOnTap, { once: true });
             clearSlideInterval();
             if (!audioPlayer.paused) { audioPlayer.pause(); } 
-            forceLandscapeOrientation();
         } else {
             clearOperationTimer();
             modalImage.removeEventListener('click', goToNextImageOnTap);
@@ -148,18 +187,27 @@ function closeModal() {
     clearOperationTimer();
     clearSlideInterval(); 
     
+    // フルスクリーン解除と横向きロック解除
+    if (document.exitFullscreen) {
+        document.exitFullscreen();
+    } else if (document.mozCancelFullScreen) {
+        document.mozCancelFullScreen();
+    } else if (document.webkitExitFullscreen) {
+        document.webkitExitFullscreen();
+    } else if (document.msExitFullscreen) {
+        document.msExitFullscreen();
+    }
+    releaseOrientationLock();
+    
     document.body.classList.remove('slideshow-mode');
     isSlideshowMode = false;
     modal.style.display = 'none';
     
     audioPlayer.pause();
     audioPlayer.currentTime = 0;
-    
-    releaseOrientationLock();
 }
 
 function updateModalImage() {
-    // 💡 ALL_IMAGES を使用
     const newImage = ALL_IMAGES[currentImageIndex]; 
     
     modalImage.style.opacity = '0';
@@ -167,10 +215,8 @@ function updateModalImage() {
     setTimeout(() => {
         modalImage.src = newImage.src;
         modalImage.alt = newImage.alt;
-        
         modalImage.style.opacity = '1';
         
-        // ダウンロードボタンのリンクを更新
         downloadBtn.href = newImage.src;
         downloadBtn.download = newImage.src.split('/').pop();
         
@@ -183,7 +229,6 @@ function changeImage(step) {
     const newIndex = currentImageIndex + step;
     if (newIndex >= 0 && newIndex < ALL_IMAGES.length) { 
         
-        // スライドショーの2枚目から1枚目（操作方法）へ戻るのを禁止
         if (isSlideshowMode && currentImageIndex === 1 && step === -1) {
             return; 
         }
@@ -217,7 +262,6 @@ function updateNavigationState() {
     modal.classList.toggle('first-image', isFirst);
     
     if (!isSlideshowMode) {
-        // 個別拡大モードでは操作方法の画像は表示されないため、prevボタンを常に有効
         prevBtn.classList.remove('disabled-btn'); 
     }
 }
@@ -237,7 +281,6 @@ function handleFormSubmit(e) {
     submitBtn.disabled = true;
     formStatus.textContent = 'メッセージを送信しています...';
 
-    // GASにデータを送信
     fetch(GAS_URL, {
         method: 'POST',
         mode: 'no-cors', 
@@ -265,7 +308,13 @@ function handleFormSubmit(e) {
     });
 }
 
-// --- イベントリスナーの設定 (変更なし) ---
+// --- イベントリスナーの設定 ---
+
+// 🍔 ハンバーガーメニューの開閉
+hamburgerIcon.addEventListener('click', () => {
+    mainNav.classList.toggle('open');
+    hamburgerIcon.classList.toggle('open');
+});
 
 slideshowBtn.addEventListener('click', () => {
     openModal(0, true);
@@ -274,6 +323,9 @@ slideshowBtn.addEventListener('click', () => {
 // 💌 メッセージボタンのイベント
 messageBtn.addEventListener('click', () => {
     messageModal.style.display = 'flex';
+    // 🍔 メニューを閉じる
+    mainNav.classList.remove('open');
+    hamburgerIcon.classList.remove('open');
 });
 messageCloseBtn.addEventListener('click', () => {
     messageModal.style.display = 'none';
@@ -303,6 +355,7 @@ document.addEventListener('keydown', (e) => {
 });
 
 modal.addEventListener('click', (e) => {
+    // 💡 xボタンが押されたときも閉じられるように、closeBtnのクリックイベントはそのまま
     if (isSlideshowMode) { 
         const rect = modal.getBoundingClientRect();
         const clickX = e.clientX - rect.left;
@@ -325,30 +378,6 @@ modal.addEventListener('touchend', (e) => {
         }
     }
 });
-
-// --- 画面の向き強制（スマホ/タブレット） ---
-
-function forceLandscapeOrientation() {
-    if (window.screen.orientation && (window.innerWidth < 1024 || window.innerHeight < 1024)) {
-        try {
-            window.screen.orientation.lock('landscape').catch(err => {
-                console.log("Orientation lock failed:", err);
-            });
-        } catch (e) {
-            console.log("Orientation lock not supported or failed:", e);
-        }
-    }
-}
-
-function releaseOrientationLock() {
-    if (window.screen.orientation && (window.innerWidth < 1024 || window.innerHeight < 1024)) {
-        try {
-            window.screen.orientation.unlock();
-        } catch (e) {
-            console.log("Orientation unlock failed:", e);
-        }
-    }
-}
 
 // 最初の処理の実行
 document.addEventListener('DOMContentLoaded', createGrid);
