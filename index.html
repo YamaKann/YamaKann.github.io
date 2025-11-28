@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>山本幹大アルバム</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+    <header class="header">
+        <h1>山本幹大アルバム</h1>
+        <button id="slideshow-btn">スライドショーで見る</button>
+        
+        <a href="view_messages.html" id="view-messages-link" 
+           style="padding: 10px 20px; font-size: 1em; color: #4A90E2; 
+                  text-decoration: none; border: 1px solid #4A90E2; 
+                  border-radius: 25px; margin-right: 10px;">メッセージを閲覧</a>
+
+        <button id="message-btn">メッセージを送る</button>
+    </header>
+
+    <section id="hero-section">
+        <h2 id="hero-message">山本幹大いままでありがとう！！</h2>
+    </section>
+
+    <main id="grid-container" class="grid-container"></main>
+
+    <audio id="audio-player" src="audio/bokura_mata.mp3" preload="auto"></audio>
+
+    <div id="modal" class="modal">
+        <div class="modal-content">
+            <button class="modal-nav-btn prev-btn" id="prev-btn">◀</button>
+            
+            <div class="image-slider-wrapper">
+                <img id="modal-image" src="" alt="拡大画像">
+            </div>
+            
+            <button class="modal-nav-btn next-btn" id="next-btn">▶</button>
+            
+            <span class="close-btn" id="close-btn">&times;</span>
+
+            <a id="download-btn" href="#" download class="download-btn" title="画像をダウンロード">この画像をダウンロードする</a>
+        </div>
+    </div>
+
+    <div id="message-modal" class="modal">
+        <div class="message-modal-content">
+            <span class="close-btn" id="message-close-btn">&times;</span>
+            <h2>メッセージをどうぞ！</h2>
+            <form id="message-form">
+                <div class="form-group">
+                    <label for="name">名前:</label>
+                    <input type="text" id="name" name="名前" required>
+                </div>
+                <div class="form-group">
+                    <label for="title">タイトル:</label>
+                    <input type="text" id="title" name="タイトル" required>
+                </div>
+                <div class="form-group">
+                    <label for="message">メッセージ:</label>
+                    <textarea id="message" name="メッセージ" rows="5" required></textarea>
+                </div>
+                <button type="submit" id="submit-message-btn">送信</button>
+                <p id="form-status" style="margin-top: 15px; color: #50e3c2; font-weight: bold;"></p>
+            </form>
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>
