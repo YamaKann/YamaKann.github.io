@@ -1,0 +1,178 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>山本幹太アルバム｜メッセージを見る</title>
+    <link rel="stylesheet" href="style.css">
+    <style>
+        /* 認証フォームのスタイル */
+        #auth-container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            min-height: 100vh;
+            text-align: center;
+            background-color: #f4f4f9;
+        }
+
+        #auth-form {
+            background: #fff;
+            padding: 40px;
+            border-radius: 10px;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+            max-width: 400px;
+            width: 90%;
+        }
+
+        #auth-form input {
+            padding: 12px;
+            margin: 15px 0 20px 0;
+            width: 100%;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            box-sizing: border-box;
+            font-size: 1.1em;
+        }
+
+        #auth-form button {
+            padding: 12px 30px;
+            font-size: 1.1em;
+            color: #fff;
+            background-color: #4A90E2; 
+            border: none;
+            border-radius: 25px;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+
+        #auth-form button:hover {
+            background-color: #387ac2;
+        }
+        
+        /* メッセージ一覧のスタイル */
+        #messages-container {
+            display: none; /* 初期状態では非表示 */
+            padding: 40px 20px;
+            max-width: 800px;
+            margin: 0 auto;
+        }
+        
+        #messages-container h1 {
+            color: #4A90E2;
+            text-align: center;
+            margin-bottom: 30px;
+        }
+        
+        .message-card {
+            background: #fff;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05);
+            margin-bottom: 20px;
+        }
+        
+        .message-card h3 {
+            color: #333;
+            font-size: 1.2em;
+            margin-top: 0;
+            border-bottom: 1px solid #eee;
+            padding-bottom: 5px;
+        }
+        
+        .message-card p {
+            white-space: pre-wrap; /* メッセージの改行を反映 */
+            line-height: 1.6;
+        }
+        
+        .message-footer {
+            display: flex;
+            justify-content: space-between;
+            font-size: 0.9em;
+            color: #999;
+            margin-top: 10px;
+        }
+    </style>
+</head>
+<body>
+    <div id="auth-container">
+        <form id="auth-form">
+            <h2>メッセージを見る</h2>
+            <p>閲覧にはパスワードが必要です。</p>
+            <input type="password" id="password-input" placeholder="パスワードを入力" required>
+            <button type="submit">認証</button>
+            <p id="auth-status" style="color: red; margin-top: 15px;"></p>
+        </form>
+    </div>
+
+    <div id="messages-container">
+        </div>
+    
+    <script>
+        // ★重要: index.htmlのGAS_URLと同じURLを設定してください
+        const GAS_URL = 'https://script.google.com/macros/s/AKfycbyT4xfqn1GC-GRdTDT1pMjXueaHmn-sG4luRegfGAWc4ZiZ_nMOI02nJlu0kgpygyGz/exec';
+
+        const authContainer = document.getElementById('auth-container');
+        const messagesContainer = document.getElementById('messages-container');
+        const authForm = document.getElementById('auth-form');
+        const authStatus = document.getElementById('auth-status');
+        
+        const passwordInput = document.getElementById('password-input');
+
+        authForm.addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            // ★重要: ここに設定したパスワードとGAS側のパスワードを一致させてください
+            const password = passwordInput.value; 
+            
+            authStatus.textContent = '認証中...';
+
+            fetch(GAS_URL + '?action=getMessages&password=' + encodeURIComponent(password))
+                .then(response => {
+                    if (!response.ok) { throw new Error('Network response was not ok'); }
+                    return response.json();
+                })
+                .then(data => {
+                    if (data.status === 'success') {
+                        authContainer.style.display = 'none';
+                        messagesContainer.style.display = 'block';
+                        displayMessages(data.messages);
+                    } else {
+                        authStatus.textContent = data.message || 'パスワードが違います。';
+                    }
+                })
+                .catch(error => {
+                    console.error('Fetch error:', error);
+                    authStatus.textContent = 'エラーが発生しました。時間を置いて再試行してください。';
+                });
+        });
+        
+        function displayMessages(messages) {
+            let html = '<h1>💌 みんなからのメッセージ (' + messages.length + '件)</h1>';
+            
+            if (messages.length === 0) {
+                html += '<p style="text-align: center; color: #999;">まだメッセージはありません。</p>';
+                messagesContainer.innerHTML = html;
+                return;
+            }
+
+            messages.forEach(msg => {
+                // msg配列のインデックス: 0:タイムスタンプ, 1:名前, 2:タイトル, 3:メッセージ
+                html += `
+                    <div class="message-card">
+                        <h3>${msg[2]}</h3>
+                        <p>${msg[3]}</p>
+                        <div class="message-footer">
+                            <span>from: ${msg[1]}</span>
+                            <span>${msg[0]}</span>
+                        </div>
+                    </div>
+                `;
+            });
+            
+            messagesContainer.innerHTML = html;
+        }
+    </script>
+</body>
+</html>
