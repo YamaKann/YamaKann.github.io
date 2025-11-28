@@ -3,23 +3,27 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>山本幹大アルバム</title>
+    <title>山本幹太アルバム</title>
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
 
     <header class="header">
-        <h1>山本幹大アルバム</h1>
-        <button id="slideshow-btn">スライドショーで見る</button>
+        <h1>山本幹太アルバム</h1>
         
-        <a href="view_messages" id="view-messages-link" 
-           style="padding: 10px 20px; font-size: 1em; color: #4A90E2; 
-                  text-decoration: none; border: 1px solid #4A90E2; 
-                  border-radius: 25px; margin-right: 10px;">メッセージを閲覧</a>
+        <button class="hamburger-icon" id="hamburger-icon">
+            <div class="bar"></div>
+            <div class="bar"></div>
+            <div class="bar"></div>
+        </button>
 
-        <button id="message-btn">メッセージを送る</button>
+        <nav id="main-nav" class="main-nav">
+            <button id="slideshow-btn">スライドショーで見る</button>
+            <a href="view_messages.html" id="view-messages-link">メッセージを閲覧</a>
+            <button id="message-btn">メッセージを送る</button>
+        </nav>
     </header>
-
+    
     <section id="hero-section">
         <h2 id="hero-message">山本幹大いままでありがとう！！</h2>
     </section>
@@ -69,5 +73,4 @@
 
     <script src="script.js"></script>
 </body>
-
 </html>
