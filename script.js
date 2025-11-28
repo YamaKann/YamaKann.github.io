@@ -1,7 +1,6 @@
 // 🖼️ 全画像リスト（スライドショーで使用） - 「操作方法」を含める
 const ALL_IMAGES = [
     { src: 'images/操作方法.png', alt: '操作方法', isControl: true }, // ★操作方法
-    { src: 'images/ツーショット①.jpg', alt: 'ツーショット①', isControl: false }, 
     { src: 'images/ツーショット②.jpg', alt: 'ツーショット②', isControl: false },
     { src: 'images/集合写真①.jpg', alt: '集合写真①', isControl: false },
     { src: 'images/集合写真②.jpg', alt: '集合写真②', isControl: false },
@@ -388,4 +387,5 @@ modal.addEventListener('touchend', (e) => {
 });
 
 // 最初の処理の実行
+
 document.addEventListener('DOMContentLoaded', createGrid);
